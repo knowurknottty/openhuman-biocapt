@@ -32,9 +32,14 @@ use crate::openhuman::memory::traits::Memory;
 /// `embedding_dimensions` are ignored on this path — agentmemory owns its
 /// embedding stack via `~/.agentmemory/.env`.
 pub const AGENTMEMORY_BACKEND: &str = "agentmemory";
+pub const BIOCAPT_BACKEND: &str = "biocapt";
 
 fn is_agentmemory_backend(name: &str) -> bool {
     name.eq_ignore_ascii_case(AGENTMEMORY_BACKEND)
+}
+
+fn is_biocapt_backend(name: &str) -> bool {
+    name.eq_ignore_ascii_case(BIOCAPT_BACKEND)
 }
 
 /// One-shot guard so the Ollama health-gate fallback only reports to Sentry
@@ -381,6 +386,20 @@ fn create_memory_full(
                 .unwrap_or(crate::openhuman::memory::store::agentmemory_default_url()),
         );
         let backend = AgentMemoryBackend::from_config(config)?;
+        return Ok(Box::new(backend));
+    }
+
+    // 0b. Short-circuit for bioCAPT backend — the cognitive architecture
+    //     replaces the SQLite + embedder stack entirely. bioCAPT owns its
+    //     own ECHO memory palace, NEDA attention, HMC holographic decoding,
+    //     QIPC consensus, and IMMU constitutional gating.
+    if is_biocapt_backend(&config.backend) {
+        let url = config
+            .biocapt_url
+            .as_deref()
+            .unwrap_or(crate::openhuman::biocapt_client::biocapt_default_url());
+        log::info!("[memory::factory] using bioCAPT backend at {url}");
+        let backend = crate::openhuman::memory::store::BiocaptMemory::new(url)?;
         return Ok(Box::new(backend));
     }
 

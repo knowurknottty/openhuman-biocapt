@@ -27,12 +27,13 @@ pub struct BiocaptMemory {
 }
 
 impl BiocaptMemory {
-    /// Create a new bioCAPT memory backend.
-    pub fn new(client: BiocaptClient) -> Self {
-        Self {
+    /// Create a new bioCAPT memory backend from a base URL.
+    pub fn new(base_url: impl Into<String>) -> anyhow::Result<Self> {
+        let client = BiocaptClient::new(base_url)?;
+        Ok(Self {
             client,
             fallback: None,
-        }
+        })
     }
 
     /// Attach a SQLite fallback for when bioCAPT is unreachable.

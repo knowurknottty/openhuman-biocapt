@@ -21,3 +21,13 @@ pub mod types;
 
 pub use client::BiocaptClient;
 pub use types::*;
+
+/// Default base URL for the bioCAPT cognitive API server.
+pub const DEFAULT_BIOCAPT_URL: &str = "http://127.0.0.1:8787";
+
+/// Returns the documented default base URL for the bioCAPT daemon
+/// (`http://127.0.0.1:8787`). Exposed for log lines / errors so callers
+/// don't have to import the constant by name.
+pub fn biocapt_default_url() -> &'static str {
+    DEFAULT_BIOCAPT_URL
+}

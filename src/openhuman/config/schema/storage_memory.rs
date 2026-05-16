@@ -58,6 +58,12 @@ pub struct MemoryConfig {
     #[serde(default)]
     pub agentmemory_url: Option<String>,
 
+    /// Base URL for the bioCAPT cognitive API server. Honored only when
+    /// `backend = "biocapt"`. Defaults to `http://127.0.0.1:8787`
+    /// (the bioCAPT local daemon default).
+    #[serde(default)]
+    pub biocapt_url: Option<String>,
+
     /// Optional bearer token sent as `Authorization: Bearer <secret>`
     /// to the agentmemory REST server. When unset, the backend speaks
     /// to a local agentmemory daemon without authentication. Setting a
@@ -114,6 +120,7 @@ impl Default for MemoryConfig {
             agentmemory_url: None,
             agentmemory_secret: None,
             agentmemory_timeout_ms: None,
+            biocapt_url: None,
         }
     }
 }
@@ -139,6 +146,7 @@ impl std::fmt::Debug for MemoryConfig {
                 &self.agentmemory_secret.as_ref().map(|_| "<redacted>"),
             )
             .field("agentmemory_timeout_ms", &self.agentmemory_timeout_ms)
+            .field("biocapt_url", &self.biocapt_url)
             .finish()
     }
 }
