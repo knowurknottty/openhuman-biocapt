@@ -7,6 +7,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { nodePolyfills } from "vite-plugin-node-polyfills";
+import { VitePWA } from "vite-plugin-pwa";
 
 const host = process.env.TAURI_DEV_HOST;
 
@@ -136,6 +137,35 @@ export default defineConfig(async () => ({
     guardCefRelListSupportsPlugin(),
     react(),
     maybeSentryPlugin(),
+    isWebTarget
+      ? VitePWA({
+          registerType: "autoUpdate",
+          manifest: false, // Use public/manifest.json
+          workbox: {
+            maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB — OpenHuman bundle is ~2.6MB
+            globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+            runtimeCaching: [
+              {
+                urlPattern: /^https:\/\/biocapt-api-proxy\.knowurknottty\.workers\.dev\/.*/i,
+                handler: "NetworkFirst",
+                options: {
+                  cacheName: "biocapt-api-cache",
+                  expiration: {
+                    maxEntries: 100,
+                    maxAgeSeconds: 60 * 60 * 24, // 24 hours
+                  },
+                  cacheableResponse: {
+                    statuses: [0, 200],
+                  },
+                },
+              },
+            ],
+          },
+          devOptions: {
+            enabled: false,
+          },
+        })
+      : null,
   ].filter(Boolean) as PluginOption[],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

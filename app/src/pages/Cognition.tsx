@@ -97,7 +97,14 @@ const Cognition = () => {
     setCogitateResult(null);
     try {
       const res = await captCogitate(cogitateInput);
-      setCogitateResult(res.pulse?.content ?? 'No response');
+      // Cloudflare response: { success: true, result: { SENS: {...}, FILT: {...}, ... } }
+      // Extract the first module's insight or stringify the result
+      const result = res.result ?? {};
+      const firstModule = Object.values(result)[0] as Record<string, unknown> | undefined;
+      const insight = firstModule && typeof firstModule === 'object'
+        ? (firstModule.insight as string) || JSON.stringify(firstModule, null, 2)
+        : JSON.stringify(result, null, 2);
+      setCogitateResult(insight || 'No response');
     } catch (err) {
       handleError(err);
     } finally {
@@ -187,7 +194,9 @@ const Cognition = () => {
           <div className="rounded-xl border border-stone-200 bg-white p-3">
             <div className="text-xs text-stone-500">Overall Score</div>
             <div className="text-xl font-bold text-stone-900">
-              {evals ? `${(evals.overall * 100).toFixed(0)}%` : '—'}
+              {evals?.evals?.length
+                ? `${(evals.evals.reduce((s, e) => s + (e.score ?? 0), 0) / evals.evals.length * 100).toFixed(0)}%`
+                : '—'}
             </div>
           </div>
         </div>
@@ -299,22 +308,17 @@ const Cognition = () => {
         </div>
 
         {/* Evals */}
-        {evals && (
+        {evals && evals.evals && evals.evals.length > 0 && (
           <Panel title="Constitutional Evals">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {([
-                { label: 'Accuracy', value: evals.accuracy },
-                { label: 'Security', value: evals.security },
-                { label: 'Governance', value: evals.governance },
-                { label: 'Boundaries', value: evals.boundaries },
-              ] as const).map(({ label, value }) => (
-                <div key={label} className="rounded-lg border border-stone-200 bg-white p-2 text-center">
-                  <div className="text-[10px] text-stone-500 uppercase tracking-wide">{label}</div>
-                  <div className="text-lg font-bold text-stone-900">{(value * 100).toFixed(0)}%</div>
+              {evals.evals.map((ev) => (
+                <div key={ev.category} className="rounded-lg border border-stone-200 bg-white p-2 text-center">
+                  <div className="text-[10px] text-stone-500 uppercase tracking-wide">{ev.category}</div>
+                  <div className="text-lg font-bold text-stone-900">{((ev.score ?? 0) * 100).toFixed(0)}%</div>
                   <div className="mt-1 h-1.5 w-full rounded-full bg-stone-100 overflow-hidden">
                     <div
                       className="h-full rounded-full bg-stone-900 transition-all"
-                      style={{ width: `${value * 100}%` }}
+                      style={{ width: `${(ev.score ?? 0) * 100}%` }}
                     />
                   </div>
                 </div>

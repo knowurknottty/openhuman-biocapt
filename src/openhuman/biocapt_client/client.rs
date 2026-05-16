@@ -14,7 +14,7 @@ use serde_json::json;
 
 use super::types::*;
 
-const DEFAULT_BASE_URL: &str = "http://127.0.0.1:8787";
+const DEFAULT_BASE_URL: &str = "https://biocapt-api-proxy.knowurknottty.workers.dev";
 const DEFAULT_TIMEOUT: Duration = Duration::from_secs(30);
 const LONG_TIMEOUT: Duration = Duration::from_secs(120);
 

@@ -23,7 +23,8 @@ pub use client::BiocaptClient;
 pub use types::*;
 
 /// Default base URL for the bioCAPT cognitive API server.
-pub const DEFAULT_BIOCAPT_URL: &str = "http://127.0.0.1:8787";
+/// Points to Cloudflare Worker deployment; override for local development.
+pub const DEFAULT_BIOCAPT_URL: &str = "https://biocapt-api-proxy.knowurknottty.workers.dev";
 
 /// Returns the documented default base URL for the bioCAPT daemon
 /// (`http://127.0.0.1:8787`). Exposed for log lines / errors so callers
