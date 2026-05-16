@@ -8,6 +8,7 @@ import AppRoutes from './AppRoutes';
 import AppBackground from './components/AppBackground';
 import AppUpdatePrompt from './components/AppUpdatePrompt';
 import BootCheckGate from './components/BootCheckGate/BootCheckGate';
+import { isTauri } from './utils/tauriCommands/common';
 import BottomTabBar from './components/BottomTabBar';
 import CommandProvider from './components/commands/CommandProvider';
 import ServiceBlockingGate from './components/daemon/ServiceBlockingGate';
@@ -60,7 +61,26 @@ function App() {
       <Provider store={store}>
         <PersistGate loading={<PersistRehydrationScreen />} persistor={persistor}>
           <I18nProvider>
-            <BootCheckGate>
+            {isTauri() ? (
+              <BootCheckGate>
+                <CoreStateProvider>
+                  <SocketProvider>
+                    <ChatRuntimeProvider>
+                      <Router>
+                        <CommandProvider>
+                          <ServiceBlockingGate>
+                            <AppShell />
+                            <DictationHotkeyManager />
+                            <LocalAIDownloadSnackbar />
+                            <AppUpdatePrompt />
+                          </ServiceBlockingGate>
+                        </CommandProvider>
+                      </Router>
+                    </ChatRuntimeProvider>
+                  </SocketProvider>
+                </CoreStateProvider>
+              </BootCheckGate>
+            ) : (
               <CoreStateProvider>
                 <SocketProvider>
                   <ChatRuntimeProvider>
@@ -77,7 +97,7 @@ function App() {
                   </ChatRuntimeProvider>
                 </SocketProvider>
               </CoreStateProvider>
-            </BootCheckGate>
+            )}
           </I18nProvider>
         </PersistGate>
       </Provider>
