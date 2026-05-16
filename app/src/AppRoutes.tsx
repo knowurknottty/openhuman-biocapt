@@ -6,6 +6,7 @@ import PublicRoute from './components/PublicRoute';
 import HumanPage from './features/human/HumanPage';
 import Accounts from './pages/Accounts';
 import Channels from './pages/Channels';
+import Cognition from './pages/Cognition';
 import Home from './pages/Home';
 import Intelligence from './pages/Intelligence';
 import Invites from './pages/Invites';
@@ -63,6 +64,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute requireAuth={true}>
             <Intelligence />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/cognition"
+        element={
+          <ProtectedRoute requireAuth={true}>
+            <Cognition />
           </ProtectedRoute>
         }
       />
