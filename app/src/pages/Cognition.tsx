@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import FrankencaptModulePicker from '../components/FrankencaptModulePicker';
 import {
   CaptEvalsResult,
   CaptHealth,
@@ -326,6 +327,11 @@ const Cognition = () => {
             </div>
           </Panel>
         )}
+
+        {/* Frankencapt Module Picker */}
+        <Panel title="Module Configuration">
+          <FrankencaptModulePicker />
+        </Panel>
       </div>
     </div>
   );
