@@ -20,11 +20,13 @@ pub mod types;
 mod unified;
 
 mod agentmemory;
+mod biocapt;
 mod client;
 mod factories;
 mod memory_trait;
 
 pub use agentmemory::{agentmemory_default_url, AgentMemoryBackend, DEFAULT_AGENTMEMORY_URL};
+pub use biocapt::BiocaptMemory;
 
 pub use client::{MemoryClient, MemoryClientRef, MemoryState};
 pub use factories::{

@@ -1,6 +1,8 @@
 #[cfg(not(any(target_os = "windows", target_os = "macos", target_os = "linux")))]
 compile_error!("src-tauri host is desktop-only. Non-desktop targets are not supported.");
 
+mod biocapt_process;
+mod biocapt_rpc;
 mod cdp;
 #[cfg(target_os = "macos")]
 mod cef_preflight;
@@ -2693,6 +2695,15 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            biocapt_rpc::capt_health,
+            biocapt_rpc::capt_status,
+            biocapt_rpc::capt_ingest,
+            biocapt_rpc::capt_sweep,
+            biocapt_rpc::capt_cogitate,
+            biocapt_rpc::capt_query_memory,
+            biocapt_rpc::capt_consolidate,
+            biocapt_rpc::capt_evals,
+            biocapt_rpc::capt_reflect,
             core_rpc_url,
             core_rpc_token,
             overlay_parent_rpc_url,
